@@ -1,6 +1,9 @@
 #!/usr/bin/env bash -e
 workdir=$(pwd)
+echo "== log: workdir: $workdir"
+
 app=$(basename $0)
+echo "== log: app: $app"
 
 test -f ${workdir}/_${app}.done && { echo "== log: workdir: $workdir; app: $app; we DID it, exiting" ; exit 0 ; }
 
