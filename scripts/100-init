@@ -1,16 +1,16 @@
 #!/usr/bin/env bash -e
 app=$(basename $0)
+
+# working dir
 c9d="${HOME}/.c9env-init"
 
-echo ${c9d}
-
-# exit if we did this before
+# exit if we DID this before
 test -f ${c9d}/_${app}.done && exit 0
 
-# if there is no dir, remove file with such name and create dir
+# if there is no dir, remove such a file if it exists and create dir
 test -d ${c9d} || { rm -fr ${c9d} ; mkdir ${c9d} ; }
 
-# add running init to .bashrc - only once
+# add init to .bashrc - only once
 test -f ${c9d}/_${app}.done-bashrc || {
 cat <<EOF >> ${HOME}/.bashrc && touch ${c9d}/_${app}-done-bashrc
 if [ -x ${c9d}/init ]; then
@@ -26,17 +26,19 @@ git clone https://github.com/FreeIaC/cloud9init.git ${c9d}/cloud9init
 touch ${c9d}/_${app}.done-clone
 }
 
+# create temporal init and make it executable
 cat <<EOF > ${c9d}/init~
 #!/usr/bin/env bash -e
 
 cd ${c9d}
-find -s cloud9init/scripts -name "[1-9][0-9][0-9]-*" -exec bash \;
+find -s cloud9init/scripts -name "[1-9][0-9][0-9]-*" -exec bash ls -1 \;
 EOF
 
 chmod +x ${c9d}/init~
 
-# mark that we done this
+# mark that we DONE this
 touch ${c9d}/_${app}.done
 
+# persist and run init
 mv ${c9d}/init~ ${c9d}/init
-#bash ${c9d}/init
+bash ${c9d}/init
