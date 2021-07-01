@@ -21,7 +21,9 @@ echo "== log $0: git repo cloned to ${c9d}/cloud9init"
 
 # create temporal init and make it executable
 cat <<EOF > ${c9d}/init~
-#!/usr/bin/env bash -e
+#!/usr/bin/env bash
+
+set -e
 
 cd ${c9d}
 find cloud9init/scripts -name "[0-9][0-9][0-9]-*" -print0 | sort -z |  xargs -n 1 -0 -I% bash -c 'bash %'
