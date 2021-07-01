@@ -1,0 +1,21 @@
+#!/usr/bin/env bash -e
+wd=$(pwd)
+app=$(basename $0)
+test -f ${wd}/_${app}.done && { echo "== log $0: we DID it, exiting" ; exit 0 ; }
+
+install_kubectl () {
+  local dir=$(mktemp -d)
+  cd $dir
+  curl -fsSLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  curl -fsSLO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+  echo "$(<kubectl.sha256) kubectl" | sha256sum --check
+  sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  cd -
+  rm -fr $dir
+}
+
+install_kubectl
+
+touch ${wd}/_${app}.done
+
+kubectl version --client -o yaml

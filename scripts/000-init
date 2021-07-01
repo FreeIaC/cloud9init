@@ -1,13 +1,8 @@
 #!/usr/bin/env bash -e
-workdir=$(pwd)
-echo "== log $0: workdir: $workdir"
-
 app=$(basename $0)
-echo "== log $0: app: $app"
 
-# working dir
+# defining c9 working dir
 c9d="${HOME}/.c9env-init"
-echo "== log $0: c9d: $c9d"
 
 # exit if we DID this before
 test -f ${c9d}/_${app}.done && { echo "== log $0: we DID it before; exiting" ; exit 0 ; }
@@ -40,18 +35,14 @@ cat <<EOF > ${c9d}/init~
 #!/usr/bin/env bash -e
 
 cd ${c9d}
-find -s cloud9init/scripts -name "[1-9][0-9][0-9]-*" -print0 | xargs -n 1 -0 -I% bash -c 'bash %'
-echo "==== log $0: find + xargs run"
+find -s cloud9init/scripts -name "[0-9][0-9][0-9]-*" -print0 | xargs -n 1 -0 -I% bash -c 'bash %'
 EOF
 
 chmod +x ${c9d}/init~
-echo "== log $0: ${c9d}/init~ created"
 
 # mark that we DONE this
 touch ${c9d}/_${app}.done
 
 # persist and run init
 mv ${c9d}/init~ ${c9d}/init
-echo "== log $0: run: bash ${c9d}/init"
 bash ${c9d}/init
-echo "== log $0: done: bash ${c9d}/init"

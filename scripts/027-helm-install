@@ -1,0 +1,15 @@
+#!/usr/bin/env bash -e
+wd=$(pwd)
+app=$(basename $0)
+test -f ${wd}/_${app}.done && { echo "== log $0: we DID it, exiting" ; exit 0 ; }
+
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+helm repo add stable https://charts.helm.sh/stable
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add eks https://aws.github.io/eks-charts
+helm repo update
+
+touch ${wd}/_${app}.done
+
+helm version --short

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash -e
+wd=$(pwd)
+app=$(basename $0)
+test -f ${wd}/_${app}.done && { echo "== log $0: we DID it, exiting" ; exit 0 ; }
+
+sudo yum update && sudo yum -y install jq gettext bash-completion moreutils
+
+cat <<'EOF' >> ~/.bash_aliases
+yq () {
+  docker run --rm -i -v "${PWD}":/workdir mikefarah/yq "$@"
+}
+export -f yq
+EOF
+
+touch ${wd}/_${app}.done
+
+for command in kubectl jq envsubst aws ; do
+  which $command &>/dev/null && echo "ok: $command in path" || echo "error: $command NOT FOUND"
+done

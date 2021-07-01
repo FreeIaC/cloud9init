@@ -1,0 +1,16 @@
+#!/usr/bin/env bash -e
+wd=$(pwd)
+app=$(basename $0)
+test -f ${wd}/_${app}.done && { echo "== log $0: we DID it, exiting" ; exit 0 ; }
+
+kubectl completion bash >> ~/.bash_completion
+
+touch ${wd}/_${app}.done
+
+if [ -f /etc/profile.d/bash_completion.sh ]; then
+  . /etc/profile.d/bash_completion.sh
+fi
+
+if [ -f ~/.bash_completion ]; then
+  . ~/.bash_completion
+fi

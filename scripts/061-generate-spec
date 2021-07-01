@@ -1,0 +1,81 @@
+#!/usr/bin/env bash -e
+wd=$(pwd)
+app=$(basename $0)
+
+if [ -f ${wd}/.c9env ]; then
+  . ${wd}/.c9env
+fi
+
+test -n "$AWS_REGION"       || { echo "== error: env var AWS_REGION       is not defined; exiting" ; exit -1 ; }
+test -n "$EKS_VERSION"      || { echo "== error: env var EKS_VERSION      is not defined; exiting" ; exit -1 ; }
+test -n "$KMS_KEY_ARN"      || { echo "== error: env var KMS_KEY_ARN      is not defined; exiting" ; exit -1 ; }
+test -n "$SSH_KEY_NAME"     || { echo "== error: env var SSH_KEY_NAME     is not defined; exiting" ; exit -1 ; }
+test -n "$EKS_NAME"         || { echo "== error: env var EKS_NAME         is not defined; exiting" ; exit -1 ; }
+test -n "$EKS_NG1_NAME"     || { echo "== error: env var EKS_NG1_NAME     is not defined; exiting" ; exit -1 ; }
+test -n "$EKS_NG1_CAPACITY" || { echo "== error: env var EKS_NG1_CAPACITY is not defined; exiting" ; exit -1 ; }
+test -n "$EKS_NG1_INSTANCE" || { echo "== error: env var EKS_NG1_INSTANCE is not defined; exiting" ; exit -1 ; }
+test -n "$VPC_ID"           || { echo "== error: env var VPC_ID           is not defined; exiting" ; exit -1 ; }
+test -n "$SLUG_ALBC"        || { echo "== error: env var SLUG_ALBC        is not defined; exiting" ; exit -1 ; }
+test -n "$SLUG_EDNS"        || { echo "== error: env var SLUG_EDNS        is not defined; exiting" ; exit -1 ; }
+test -n "$PROJECT_ID"       || { echo "== error: env var PROJECT_ID       is not defined; exiting" ; exit -1 ; }
+
+install () {
+  specs=$(mktemp -p "/tmp" tmp.XXXXXXXXXX.yaml)
+  cat << EOF > $specs
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: ${EKS_NAME}
+  region: ${AWS_REGION}
+  version: "${EKS_VERSION}"
+
+vpc:
+  id: ${VPC_ID}
+  subnets:
+    public:
+$(for i in $(AZS) ; do echo -n "      $i" | sed -e 's/,$//' ; echo ":" ; done)
+
+iam:
+  withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: ${SLUG_ALBC}
+      namespace: kube-system
+      labels: {aws-usage: "cluster-ops"}
+    wellKnownPolicies:
+      awsLoadBalancerController: true
+    roleName: eksctl-${EKS_NAME}-irsa-${SLUG_ALBC}
+    # roleOnly: true
+    tags:
+      project: "${PROJECT_ID}"
+  - metadata:
+      name: ${SLUG_EDNS}
+      namespace: kube-system
+      labels: {aws-usage: "cluster-ops"}
+    wellKnownPolicies:
+      externalDNS: true
+    roleName: eksctl-${EKS_NAME}-irsa-${SLUG_EDNS}
+    # roleOnly: true
+    tags:
+      project: "${PROJECT_ID}"
+
+managedNodeGroups:
+- name: ${EKS_NG1_NAME}
+  instanceType: ${EKS_NG1_INSTANCE}
+  desiredCapacity: ${EKS_NG1_CAPACITY}
+  ssh:
+    publicKeyName: ${SSH_KEY_NAME}
+
+secretsEncryption:
+  keyARN: ${KMS_KEY_ARN}
+EOF
+
+  cat $specs
+}
+
+install
+
+>&2 echo "# == log: to create cluster run the following command:"
+>&2 echo "# eksctl create cluster -f $specs"

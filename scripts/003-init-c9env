@@ -1,10 +1,14 @@
 #!/usr/bin/env bash -e
-test -f ./_done_${0} && exit 0
+wd=$(pwd)
+app=$(basename $0)
+test -f ${wd}/_${app}.done && { echo "== log $0: we DID it, exiting" ; exit 0 ; }
 
 cat <<EOF >> ~/.bashrc
-if [ -f ~/.c9env ]; then
-  . ~/.c9env
+if [ -f  ${wd}/.c9env ]; then
+  .  ${wd}/.c9env
 fi
 EOF
 
-touch ./_done_${0}
+> ${wd}/.c9env
+
+touch ${wd}/_${app}.done

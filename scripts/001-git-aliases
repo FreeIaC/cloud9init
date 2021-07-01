@@ -1,5 +1,7 @@
 #!/usr/bin/env bash -e
-test -f ./_done_${0} && exit 0
+wd=$(pwd)
+app=$(basename $0)
+test -f ${wd}/_${app}.done && { echo "== log $0: we DID it, exiting" ; exit 0 ; }
 
 git config --global alias.br   '!git --no-pager branch'
 git config --global alias.ci   "commit"
@@ -16,4 +18,4 @@ git config --global alias.lt   "log --graph --oneline --decorate -15"
 git config --global alias.st   "status"
 git config --global alias.sts  "status -s"
 
-touch ./_done_${0}
+touch ${wd}/_${app}.done

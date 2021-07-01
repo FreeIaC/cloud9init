@@ -1,0 +1,24 @@
+#!/usr/bin/env bash -e
+wd=$(pwd)
+app=$(basename $0)
+
+if [ -f ${wd}/.c9env ]; then
+  . ${wd}/.c9env
+fi
+
+test -n "$AWS_REGION" && echo "== log: AWS_REGION is $AWS_REGION" || {
+  echo "== error: AWS_REGION is not set; exiting"
+  exit -1
+}
+
+aws configure set default.region ${AWS_REGION}
+
+aws configure get default.region | grep -q ${AWS_REGION} && echo "== log: default.region set to ${AWS_REGION}" || {
+  echo "== error: default.region was not able to set to  ${AWS_REGION}; exiting"
+  exit -1
+}
+
+aws sts get-caller-identity --query Arn | grep -q ${C9_IAM_ROLE} && echo "== log: C9 IAM role is valid: ${C9_IAM_ROLE}" || {
+  echo "error: IAM role NOT valid; exiting"
+  exit -1
+}

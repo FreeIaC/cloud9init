@@ -1,0 +1,16 @@
+#!/usr/bin/env bash -e
+wd=$(pwd)
+app=$(basename $0)
+
+if [ -f ${wd}/.c9env ]; then
+  . ${wd}/.c9env
+fi
+
+key_file=${HOME}/.ssh/id_rsa_${SSH_KEY_NAME}
+
+test -e ${key_file} -a -n "${SSH_KEY_NAME}" || {
+  aws ec2 delete-key-pair --key-name "${SSH_KEY_NAME}" --region ${AWS_REGION}
+  ssh-keygen -b 2048 -C "${SSH_KEY_NAME}" -N '' -t rsa -f ${key_file}
+  # TODO: add tag: 'project: new-gaming-2'
+  aws ec2 import-key-pair --key-name "${SSH_KEY_NAME}" --public-key-material file://${key_file}.pub --region ${AWS_REGION}
+}

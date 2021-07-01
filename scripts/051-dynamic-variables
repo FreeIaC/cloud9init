@@ -1,0 +1,24 @@
+#!/usr/bin/env bash -e
+wd=$(pwd)
+app=$(basename $0)
+
+if [ -f ${wd}/.c9env ]; then
+  . ${wd}/.c9env
+fi
+
+C9_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
+AZ_LIST=($(aws ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text --region $AWS_REGION))
+KMS_KEY_ARN=$(aws kms describe-key --key-id alias/${KMS_KEY_NAME} --query KeyMetadata.Arn --output text --region ${AWS_REGION})
+VPC_ID=$(aws ec2 describe-vpcs --output json --query 'Vpcs[0]' | jq '.VpcId')
+
+cat <<EOF >> ${wd}/.c9env
+export C9_REGION=${C9_REGION}
+export ACCOUNT_ID=${ACCOUNT_ID}
+AZS () {
+  echo $(printf '"%s", ' "${AZ_LIST[@]}" | sed -e 's/, $//')
+}
+export -f AZS
+export KMS_KEY_ARN=${KMS_KEY_ARN}
+export VPC_ID=${VPC_ID}
+EOF

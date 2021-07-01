@@ -1,0 +1,37 @@
+#!/usr/bin/env bash -e
+wd=$(pwd)
+app=$(basename $0)
+
+if [ -f ${wd}/.c9env-default ]; then
+  . ${wd}/.c9env-default
+fi
+
+AWS_REGION=${AWS_REGION:-eu-central-1}
+LBC_VERSION=${LBC_VERSION:-v2.2.0}
+EKS_VERSION=${EKS_VERSION:-1.19}
+KMS_KEY_NAME=${KMS_KEY_NAME:-eks-kms-key}
+SSH_KEY_NAME=${SSH_KEY_NAME:-eks-ssh-key}
+EKS_NAME=${EKS_NAME:-eks-cluster}
+EKS_NG1_NAME=${EKS_NG1_NAME:-eks-ng-main}
+EKS_NG1_CAPACITY=${EKS_NG1_CAPACITY:-3}
+EKS_NG1_INSTANCE=${EKS_NG1_INSTANCE:-t3.small}
+C9_IAM_ROLE=${C9_IAM_ROLE:-c9-ec2-admin-role} # to be created and assigned as a role to c9 instance
+SLUG_EDNS=${SLUG_EDNS:-aws-external-dns}
+SLUG_ALBC=${SLUG_ALBC:-aws-load-balancer-controller}
+PROJECT_ID=${PROJECT_ID:-new-gaming}
+
+cat <<EOF >> ${wd}/.c9env
+export AWS_REGION="${AWS_REGION}"
+export LBC_VERSION="${LBC_VERSION}"
+export EKS_VERSION=${EKS_VERSION}
+export KMS_KEY_NAME="${KMS_KEY_NAME}"
+export SSH_KEY_NAME="${SSH_KEY_NAME}"
+export EKS_NAME=${EKS_NAME}
+export EKS_NG1_NAME=${EKS_NG1_NAME}
+export EKS_NG1_CAPACITY=${EKS_NG1_CAPACITY}
+export EKS_NG1_INSTANCE=${EKS_NG1_INSTANCE}
+export C9_IAM_ROLE="${C9_IAM_ROLE}"
+export SLUG_EDNS="${SLUG_EDNS}"
+export SLUG_ALBC="${SLUG_ALBC}"
+export PROJECT_ID="${PROJECT_ID}"
+EOF

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash -e
-test -f ./_done_${0} && exit 0
+wd=$(pwd)
+app=$(basename $0)
+test -f ${wd}/_${app}.done && { echo "== log $0: we DID it, exiting" ; exit 0 ; }
 
 export instance_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 sudo yum update && sudo yum -y install jq
@@ -32,7 +34,7 @@ except ClientError as e:
         print('ERROR MESSAGE: {}'.format(e))"
 
 if [ $? -eq 0 ]; then
-    touch ./_done_${0}
+    touch ${wd}/_${app}.done
     echo "ok: Disk size is increased, rebooting..."
     sudo reboot
 else
