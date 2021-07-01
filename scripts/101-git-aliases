@@ -1,0 +1,6 @@
+#!/usr/bin/env bash -e
+test -f ./_done_${0} && exit 0
+
+echo "== log: appA: $0"
+
+touch ./_done_${0}

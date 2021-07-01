@@ -1,0 +1,9 @@
+#!/usr/bin/env bash -e
+test -f ./_done_${0} && exit 0
+
+python3 -m pip install --user --upgrade pip awscli boto3
+
+touch ./_done_${0}
+
+hash -r
+aws --version

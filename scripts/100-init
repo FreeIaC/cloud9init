@@ -1,0 +1,31 @@
+#!/usr/bin/env bash -e
+test -f ./_done_${0} && exit 0
+
+test -f ./_done_${0}.bashrc || {
+cat <<EOF >> ~/.bashrc
+if [ -x ~/.c9env-init ]; then
+  bash ~/.c9env-init
+fi
+EOF
+touch ./_done_${0}.bashrc
+}
+
+test -f ./_done_${0}.clone || {
+rm -fr ~/cloud9init
+git clone https://github.com/FreeIaC/cloud9init.git ~/cloud9init
+touch ./_done_${0}.clone
+}
+
+cat <<EOF > ~/.c9env-init~
+#!/usr/bin/env bash -e
+
+cd ~/cloud9init/scripts
+find -s . -name "[1-9][0-9][0-9]-*" -exec bash
+EOF
+
+chmod +x ~/.c9env-init~
+
+touch ./_done_${0}
+
+mv ~/.c9env-init~ ~/.c9env-init
+bash ~/.c9env-init

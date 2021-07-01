@@ -1,0 +1,19 @@
+#!/usr/bin/env bash -e
+test -f ./_done_${0} && exit 0
+
+git config --global alias.br   '!git --no-pager branch'
+git config --global alias.ci   "commit"
+git config --global alias.co   "checkout"
+git config --global alias.conf "config -l --show-origin"
+git config --global alias.des  "describe"
+git config --global alias.hist "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
+git config --global alias.last "log -1 HEAD"
+git config --global alias.loh  "log --pretty=format:'[%h] %ae, %ar: %s' --stat"
+git config --global alias.lol  "log --graph --oneline --decorate --all"
+git config --global alias.ll   "log --graph --oneline --decorate"
+git config --global alias.lot  "log --graph --oneline --decorate --all -15"
+git config --global alias.lt   "log --graph --oneline --decorate -15"
+git config --global alias.st   "status"
+git config --global alias.sts  "status -s"
+
+touch ./_done_${0}
