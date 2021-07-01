@@ -1,31 +1,41 @@
 #!/usr/bin/env bash -e
-test -f ./_done_${0} && exit 0
+app=$(basename $0)
+c9d="~/.c9env-init"
 
-test -f ./_done_${0}.bashrc || {
-cat <<EOF >> ~/.bashrc
-if [ -x ~/.c9env-init ]; then
-  bash ~/.c9env-init
+# exit if we did this before
+test -f ${c9d}/_${app}.done && exit 0
+
+# if there is no dir, remove file with such name and create dir
+test -d ${c9d} || { rm -fr ${c9d} ; mkdir ${c9d} ; }
+
+# add running init to .bashrc - only once
+test -f ${c9d}/_${app}.done-bashrc || {
+cat <<EOF >> ~/.bashrc && touch ${c9d}/_${app}-done-bashrc
+if [ -x ${c9d}/init ]; then
+  bash ${c9d}/init
 fi
 EOF
-touch ./_done_${0}.bashrc
 }
 
-test -f ./_done_${0}.clone || {
-rm -fr ~/cloud9init
-git clone https://github.com/FreeIaC/cloud9init.git ~/cloud9init
-touch ./_done_${0}.clone
+# clone repo - only once
+test -f ${c9d}/_${app}.done-clone || {
+rm -fr ${c9d}/cloud9init
+git clone https://github.com/FreeIaC/cloud9init.git ${c9d}/cloud9init
+touch ${c9d}/_${app}.done-clone
 }
 
-cat <<EOF > ~/.c9env-init~
+cat <<EOF > ${c9d}/init~
 #!/usr/bin/env bash -e
 
-cd ~/cloud9init/scripts
-find -s . -name "[1-9][0-9][0-9]-*" -exec bash
+cd ${c9d}
+find -s cloud9init/scripts -name "[1-9][0-9][0-9]-*" -exec bash \;
 EOF
 
-chmod +x ~/.c9env-init~
+chmod +x ${c9d}/init~
 
-touch ./_done_${0}
+# mark that we done this
+touch ${c9d}/_${app}.done
 
-mv ~/.c9env-init~ ~/.c9env-init
-bash ~/.c9env-init
+mv ${c9d}/init~ ${c9d}/init
+#bash ${c9d}/init
+}
