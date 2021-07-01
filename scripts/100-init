@@ -1,19 +1,19 @@
 #!/usr/bin/env bash -e
 workdir=$(pwd)
-echo "== log: workdir: $workdir"
+echo "== log $0: workdir: $workdir"
 
 app=$(basename $0)
-echo "== log: app: $app"
+echo "== log $0: app: $app"
 
 # working dir
 c9d="${HOME}/.c9env-init"
-echo "== log: c9d: $c9d"
+echo "== log $0: c9d: $c9d"
 
 # exit if we DID this before
-test -f ${c9d}/_${app}.done && { echo "== log: we DID it before; exiting" ; exit 0 ; }
+test -f ${c9d}/_${app}.done && { echo "== log $0: we DID it before; exiting" ; exit 0 ; }
 
 # if there is no dir, remove such a file if it exists and create dir
-test -d ${c9d} || { rm -fr ${c9d} ; mkdir ${c9d} ; echo "== log: created dir: ${c9d}" ; }
+test -d ${c9d} || { rm -fr ${c9d} ; mkdir ${c9d} ; echo "== log $0: created dir: ${c9d}" ; }
 
 # add init to .bashrc - only once
 test -f ${c9d}/_${app}.done-bashrc || {
@@ -23,7 +23,7 @@ if [ -x ${c9d}/init ]; then
 fi
 EOF
 
-echo "== log: ${HOME}/.bashrc modified"
+echo "== log $0: ${HOME}/.bashrc modified"
 }
 
 # clone repo - only once
@@ -32,7 +32,7 @@ rm -fr ${c9d}/cloud9init
 git clone https://github.com/FreeIaC/cloud9init.git ${c9d}/cloud9init
 touch ${c9d}/_${app}.done-clone
 
-echo "== log: git repo cloned to ${c9d}/cloud9init"
+echo "== log $0: git repo cloned to ${c9d}/cloud9init"
 }
 
 # create temporal init and make it executable
@@ -40,11 +40,12 @@ cat <<EOF > ${c9d}/init~
 #!/usr/bin/env bash -e
 
 cd ${c9d}
-find -s cloud9init/scripts -name "[1-9][0-9][0-9]-*" -print0 | xargs -n 1 -0 -I% bash -c 'ls -lda %'
+find -s cloud9init/scripts -name "[1-9][0-9][0-9]-*" -print0 | xargs -n 1 -0 -I% bash -c 'bash %'
+echo "== log $0: find + xargs run"
 EOF
 
 chmod +x ${c9d}/init~
-echo "== log: ${c9d}/init~ created"
+echo "== log $0: ${c9d}/init~ created"
 
 # mark that we DONE this
 touch ${c9d}/_${app}.done
@@ -52,4 +53,4 @@ touch ${c9d}/_${app}.done
 # persist and run init
 mv ${c9d}/init~ ${c9d}/init
 bash ${c9d}/init
-echo "== log: ${c9d}/init run"
+echo "== log $0: ${c9d}/init run"
