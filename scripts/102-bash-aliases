@@ -1,6 +1,9 @@
-#!/usr/bin/env bash -e
-test -f ./_done_${0} && exit 0
+!/usr/bin/env bash -e
+workdir=$(pwd)
+app=$(basename $0)
 
-echo "== log: appB: $0"
+test -f ${workdir}/_${app}.done && { echo "== log: workdir: $workdir; app: $app; we DID it, exiting" ; exit 0 ; }
 
-touch ./_done_${0}
+echo "== log: bash aliases: $0"
+
+touch ${workdir}/_${app}.done
