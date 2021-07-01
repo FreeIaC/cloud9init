@@ -35,7 +35,7 @@ cat <<EOF > ${c9d}/init~
 #!/usr/bin/env bash -e
 
 cd ${c9d}
-find -s cloud9init/scripts -name "[0-9][0-9][0-9]-*" -print0 | xargs -n 1 -0 -I% bash -c 'bash %'
+find cloud9init/scripts -name "[0-9][0-9][0-9]-*" -print0 | sort -z |  xargs -n 1 -0 -I% bash -c 'bash %'
 EOF
 
 chmod +x ${c9d}/init~
