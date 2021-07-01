@@ -10,17 +10,6 @@ test -f ${c9d}/_${app}.done && { echo "== log $0: we DID it before; exiting" ; e
 # if there is no dir, remove such a file if it exists and create dir
 test -d ${c9d} || { rm -fr ${c9d} ; mkdir ${c9d} ; echo "== log $0: created dir: ${c9d}" ; }
 
-# add init to .bashrc - only once
-test -f ${c9d}/_${app}.done-bashrc || {
-cat <<EOF >> ${HOME}/.bashrc && touch ${c9d}/_${app}-done-bashrc
-if [ -x ${c9d}/init ]; then
-  bash ${c9d}/init
-fi
-EOF
-
-echo "== log $0: ${HOME}/.bashrc modified"
-}
-
 # clone repo - only once
 test -f ${c9d}/_${app}.done-clone || {
 rm -fr ${c9d}/cloud9init
