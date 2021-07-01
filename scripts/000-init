@@ -32,6 +32,5 @@ chmod +x ${c9d}/init~
 # mark that we DONE this
 touch ${c9d}/_${app}.done
 
-# persist and run init
+# persist init
 mv ${c9d}/init~ ${c9d}/init
-bash ${c9d}/init
