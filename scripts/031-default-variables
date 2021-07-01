@@ -35,3 +35,5 @@ export SLUG_EDNS="${SLUG_EDNS}"
 export SLUG_ALBC="${SLUG_ALBC}"
 export PROJECT_ID="${PROJECT_ID}"
 EOF
+
+echo "== log $0: file ${wd}/.c9env changed"

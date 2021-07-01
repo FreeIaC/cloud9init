@@ -19,3 +19,5 @@ git config --global alias.st   "status"
 git config --global alias.sts  "status -s"
 
 touch ${wd}/_${app}.done
+
+echo "== log $0: git aliases created"

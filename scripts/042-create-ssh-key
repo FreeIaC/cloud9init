@@ -13,4 +13,5 @@ test -e ${key_file} -a -n "${SSH_KEY_NAME}" || {
   ssh-keygen -b 2048 -C "${SSH_KEY_NAME}" -N '' -t rsa -f ${key_file}
   # TODO: add tag: 'project: new-gaming-2'
   aws ec2 import-key-pair --key-name "${SSH_KEY_NAME}" --public-key-material file://${key_file}.pub --region ${AWS_REGION}
+  echo "== log $0: ssh key $key_file imported as ${SSH_KEY_NAME}"
 }

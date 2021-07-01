@@ -22,3 +22,5 @@ export -f AZS
 export KMS_KEY_ARN=${KMS_KEY_ARN}
 export VPC_ID=${VPC_ID}
 EOF
+
+echo "== log $0: file ${wd}/.c9env changed"

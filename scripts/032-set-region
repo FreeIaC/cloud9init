@@ -22,3 +22,5 @@ aws sts get-caller-identity --query Arn | grep -q ${C9_IAM_ROLE} && echo "== log
   echo "error: IAM role NOT valid; exiting"
   exit -1
 }
+
+echo "== log $0: aws default.region set to ${AWS_REGION}"

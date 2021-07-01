@@ -12,3 +12,5 @@ EOF
 > ${wd}/.c9env
 
 touch ${wd}/_${app}.done
+
+echo "== log $0: file ${wd}/.c9env initialized"

@@ -34,3 +34,4 @@ touch ${c9d}/_${app}.done
 
 # persist init
 mv ${c9d}/init~ ${c9d}/init
+echo "== log $0: script ${c9d}/init created"
